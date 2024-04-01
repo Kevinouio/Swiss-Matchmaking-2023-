@@ -1,65 +1,65 @@
 #include <iostream>
-#include <fstream>
-
-
-
+#include "outputs.h"
+#include "viewmain.h"
+#include "newtourmain.h"
 using namespace std;
 
 int main()
 {
-    int option;
-    cout << "Welcome to the Chess Swiss Game Matcher" << endl;
+    while (1){
+        int userInput = -1;
+
+        firstWindow();
+
+        while ((1 > userInput) || (userInput >3)) {
+            cin >> userInput;
+            if ((1 > userInput) || (userInput >3)) {
+                errorMessageValue();
+            }
+        }
+
+        if (userInput == 1) {
+            while (1) {
+                userInput = -1;
+
+
+                while ((1 > userInput) || (userInput >3)) {
+                    createTourWindow();
+                    cin >> userInput;
+                    if ((1 > userInput) || (userInput >3)) {
+                        errorMessageValue();
+                    }
+                }
+
+                if (userInput == 1) {
+                    newTourMain();
+                }
+                else if (userInput ==2) {
+
+                }
+                else if (userInput ==3) {
+                    break;
+                }
+
+            }
+
+
+        }
+        else if (userInput == 2) {
+            viewMain();
+        }
 
 
 
-    while (1) {
 
-
-
-
-        cout << endl << "0. Exit" << endl;
-        cout << "1. Create matches" << endl;
-        cout << "2. Update match result" << endl;
-        cout << "3. Add players" << endl;
-        cout << "4. Edit points" << endl;
-        cout << "Enter your choice: ";
-        cin >> option;
-
-        //Stop the maker
-        if(option == 0) {
-            cout << "Good-bye!" << endl;
+        else if (userInput ==3) {
             break;
-        }
-
-        // Creates Matches
-        else if(option == 1) {
-            // variable creation
-
-        }
-
-        // Update Match results
-        else if(option == 2) {
-
-
-
-
-        }
-
-        // Lmao
-        else if(option == 3) {
-
-
-
-
-        }
-
-        // wrong choice
-        else
-        {
-            cout << "You entered an invalid option. Try again." << endl;
         }
 
     }
 
 
+
+
+    return 0;
 }
