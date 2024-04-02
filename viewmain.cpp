@@ -1,5 +1,8 @@
 #include "viewmain.h"
+#include <iostream>
+using namespace std;
 
-void viewMain()  {
+void viewMain() {
 
+    cout <<"HAI";
 }

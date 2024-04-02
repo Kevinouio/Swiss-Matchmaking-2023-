@@ -9,9 +9,10 @@ int main()
     while (1){
         int userInput = -1;
 
-        firstWindow();
+
 
         while ((1 > userInput) || (userInput >3)) {
+            firstWindow();
             cin >> userInput;
             if ((1 > userInput) || (userInput >3)) {
                 errorMessageValue();
@@ -35,7 +36,7 @@ int main()
                     newTourMain();
                 }
                 else if (userInput ==2) {
-
+                    editTourMain();
                 }
                 else if (userInput ==3) {
                     break;
