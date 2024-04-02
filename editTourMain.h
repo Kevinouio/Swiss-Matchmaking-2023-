@@ -54,6 +54,7 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     int score = 0;
     ofstream txtFile(tourName + "Players.txt");
 
+    cin.ignore();
     cout << "Name of Player?\nEnter:  ";
     getline(cin, name);
     player.setName(name);
@@ -64,6 +65,7 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     player.setRating(rating);
     txtFile << rating;
 
+    cin.ignore();
     cout <<"USCFID of Player?(Type NA if player does not have one)\nEnter:  ";
     getline(cin,USCFID);
     if ("NA" == USCFID) {
@@ -185,11 +187,9 @@ void editTourMain() {
 
 
     cin.ignore();
-    getline(cin, tourName);
-
     while (true) {
         cout << "What is the name of the tournmanet? \nEnter:  ";
-        cin >> tourName;
+        getline(cin,tourName);
         inFile.open(tourName + ".csv");
 
         if (!inFile.is_open()){
