@@ -42,3 +42,11 @@ string Person::getUSCFID() {
     return USCFID;
 }
 
+void Person::setMatchHistory(int rounds) {
+    for(int i = 0; i < rounds; i++) {
+        this->matchHistory.push_back("DNE");
+    }
+}
+vector<string> Person::getMatchHistory() {
+    return matchHistory;
+}

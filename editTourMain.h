@@ -5,17 +5,54 @@
 #include <fstream>
 #include <vector>
 #include "person.h"
+#include "createPairings.h"
 
 using namespace std;
 
+void ratingSort(vector<Person> &unsortedVector, vector<Person> &sortedVector) {
+    int highest = unsortedVector[0].getRating();
+    int index = 0;
+    for (int i = 0; i < unsortedVector.size(); i++) {
+        if (unsortedVector[i].getRating() > highest) {
+            highest = unsortedVector[i].getRating();
+            index = i;
+        }
+    }
+    sortedVector.push_back(unsortedVector[index]);
+    unsortedVector.erase(unsortedVector.begin() + index);
+}
 
-void addPlayer(string tourName, vector<Person> &people) {
+void scoreSort(vector<Person>& unsortedVector, vector<Person>& sortedVector) {
+    int highest = unsortedVector[0].getScore();
+    int index = 0;
+    for (int i = 0; i < unsortedVector.size(); i++) {
+        if (unsortedVector[i].getScore() > highest) {
+            highest = unsortedVector[i].getScore();
+            index = i;
+        }
+    }
+    sortedVector.push_back(unsortedVector[index]);
+    unsortedVector.erase(unsortedVector.begin() + index);
+}
+
+
+void roundOneSort(vector<Person> sortedVector) {
+    if (sortedVector.size() % 2 == 1) {
+        cout << sortedVector[0].getName() << " : By";
+        sortedVector.erase(sortedVector.begin());
+    }
+    for (int i = 0; i < sortedVector.size() / 2; i++) {
+        cout << sortedVector[i].getName() << " : " << sortedVector[sortedVector.size() - 1 - i].getName();
+    }
+}
+
+void addPlayer(string tourName, vector<Person> &people, int rounds) {
     Person player;
     int rating;
     string name;
     string USCFID;
     int score = 0;
-    ofstream txtFile(tourName + "players.txt");
+    ofstream txtFile(tourName + "Players.txt");
 
     cout << "Name of Player?\nEnter:  ";
     getline(cin, name);
@@ -38,23 +75,17 @@ void addPlayer(string tourName, vector<Person> &people) {
     player.setScore(score);
     txtFile << score;
 
+    player.setMatchHistory(rounds);
+
     people.push_back(player);
 
 }
 
 
 
-//The logic for this part is genuinly difficult
-void createPairings(vector<Person> &people) {
-    int size = people.size()/2;
-    for (int i = 0; i < size; i++) {
-        cout << "Pairing " << i << "\t" << endl;
-    }
 
-}
-
-void getCurrentPlayers(string tourName, vector<Person> &people) {
-    ifstream inFile(tourName + "players.txt");
+void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
+    ifstream inFile(tourName + "Players.txt");
     string fileInput;
 
     while (!inFile.eof()) {
@@ -71,29 +102,69 @@ void getCurrentPlayers(string tourName, vector<Person> &people) {
         getline(inFile, fileInput);
         player.setUSCFID(fileInput);
 
+        player.setMatchHistory(rounds);
+
         people.push_back(player);
 
     }
     inFile.close();
     // Insert a sorting algorithm right here for scores first and then by ratings
+    ratingSort(people, people);
 }
 
-void viewLeaderboard(vector<Person> &people) {
+void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
+    string csvLine;
 
+
+    ofstream cvsLeaderboard(tourName + "Leaderboard.csv");
+    csvLine = "Placement,Name,Rating,Score,";
+    for(int i = 0; i < rounds; i++) {
+        if(i == rounds - 1) {
+            csvLine += "Round " + to_string(i);
+        }
+        csvLine += "Round " + to_string(i) + ",";
+    }
+    cvsLeaderboard << csvLine << endl;
+
+    // I don't really know how you want to display this because this is just the leaderboard all of the infor for this is going to be in the leaderboard file
 
     for (int i = 0; i < people.size(); i++) {
-        cout << people.at(i).getName() << endl;
-        cout << people.at(i).getRating() << endl;
-        cout << people.at(i).getScore() << endl;
-        cout << people.at(i).getUSCFID() << endl;
-
-
+        csvLine = to_string(i+1) + ",";
+        csvLine += people.at(i).getName() + ",";
+        csvLine += to_string(people.at(i).getRating()) + ",";
+        csvLine += to_string(people.at(i).getScore()) + ",";
+        for(int i = 0; i < rounds; i++) {
+            if(i == rounds - 1) {
+                csvLine += "DNE " + to_string(i);
+            }
+            csvLine += "DNE,";
+        }
+        cvsLeaderboard << csvLine << endl;
     }
 }
 
+int getRounds(string tourName) {
+    ifstream inFile(tourName + ".csv");
+    string fileLine = "";
+    vector<string> tokens;
 
+    getline(inFile, fileLine);
+    while (getline(inFile, fileLine, ',')) {
+        tokens.push_back(fileLine);
+    }
+
+    return stoi(tokens.at(5));
+
+
+}
+
+
+void removePlayer(vector<Person> &people) {
+
+
+}
 void readPlayers(string name, vector<Person> &people){
-    ifstream inFile(name + "players.txt");
+    ifstream inFile(name + "Players.txt");
 
     // This is for a display i think ryan you should code this part aswell since it is simply displaying
     // Also put your sort function here or smth
@@ -109,7 +180,7 @@ void editTourMain() {
     vector<Person> people;
     string tourName;
     int userInput = -1;
-
+    int rounds;
 
 
 
@@ -138,7 +209,7 @@ void editTourMain() {
 
     inFile.close();
 
-
+    rounds = getRounds(tourName);
 
 
     while(1) {
@@ -152,7 +223,7 @@ void editTourMain() {
         }
 
         if (userInput ==1) {
-            addPlayer(tourName, people);
+            addPlayer(tourName, people, rounds);
         }
         else if (userInput ==2) {
 
@@ -161,7 +232,7 @@ void editTourMain() {
             createPairings(people);
         }
         else if (userInput == 4) {
-
+            viewLeaderboard(people, tourName, rounds);
         }
         else if (userInput ==5) {
             break;
