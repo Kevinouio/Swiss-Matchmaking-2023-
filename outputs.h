@@ -19,7 +19,7 @@ cvsfile and then but would rather pick out a tournment from a list they have fro
 */
 
 void editTourWindow() {
-    cout << "1: Add player" << endl << " 2:Edit scores" << endl << "3: Create Pairings" << endl << "4: Exit" << "\nEnter:  ";
+    cout << "1: Add player" << endl << " 2:Edit scores" << endl << "3: Create Pairings" << endl << "4: View Leaderboard" << endl << "5: Exit" << "\nEnter:  ";
 }
 
 

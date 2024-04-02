@@ -2,6 +2,7 @@
 #include "outputs.h"
 #include "viewmain.h"
 #include "newtourmain.h"
+#include "editTourMain.h"
 using namespace std;
 
 int main()

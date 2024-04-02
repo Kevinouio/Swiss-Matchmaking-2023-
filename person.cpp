@@ -32,3 +32,13 @@ void Person::setName(string name) {
 string Person::getName() {
     return name;
 }
+
+
+void Person::setUSCFID(string USCFID) {
+    this->USCFID = USCFID;
+}
+
+string Person::getUSCFID() {
+    return USCFID;
+}
+
