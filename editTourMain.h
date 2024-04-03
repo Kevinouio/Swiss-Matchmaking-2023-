@@ -58,12 +58,12 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     cout << "Name of Player?\nEnter:  ";
     getline(cin, name);
     player.setName(name);
-    txtFile << name;
+    txtFile << name << endl;
 
     cout <<"Rating of Player?\nEnter:  ";
     cin >> rating;
     player.setRating(rating);
-    txtFile << rating;
+    txtFile << rating << endl;
 
     cin.ignore();
     cout <<"USCFID of Player?(Type NA if player does not have one)\nEnter:  ";
@@ -72,10 +72,10 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
         USCFID = "00000000";
     }
     player.setUSCFID(USCFID);
-    txtFile << USCFID;
+    txtFile << USCFID << endl;
 
     player.setScore(score);
-    txtFile << score;
+    txtFile << score << endl;
 
     player.setMatchHistory(rounds);
 
@@ -92,6 +92,8 @@ void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
 
     while (!inFile.eof()) {
         Person player;
+        vector<string> matches;
+
         getline(inFile, fileInput);
         player.setName(fileInput);
 
@@ -104,7 +106,12 @@ void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
         getline(inFile, fileInput);
         player.setUSCFID(fileInput);
 
-        player.setMatchHistory(rounds);
+        for (int i = 0; i < rounds; i++) {
+            getline(inFile, fileInput);
+            matches.push_back(fileInput);
+        }
+
+        player.setCurHistory(matches);
 
         people.push_back(player);
 
@@ -117,14 +124,15 @@ void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
 void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
     string csvLine;
 
-
+    ratingSort(people, people);
     ofstream cvsLeaderboard(tourName + "Leaderboard.csv");
     csvLine = "Placement,Name,Rating,Score,";
     for(int i = 0; i < rounds; i++) {
         if(i == rounds - 1) {
-            csvLine += "Round " + to_string(i);
+            csvLine += "Round " + to_string(i+1);
+            break;
         }
-        csvLine += "Round " + to_string(i) + ",";
+        csvLine += "Round " + to_string(i+1) + ",";
     }
     cvsLeaderboard << csvLine << endl;
 
@@ -137,7 +145,8 @@ void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
         csvLine += to_string(people.at(i).getScore()) + ",";
         for(int i = 0; i < rounds; i++) {
             if(i == rounds - 1) {
-                csvLine += "DNE " + to_string(i);
+                csvLine += "DNE";
+                break;
             }
             csvLine += "DNE,";
         }
@@ -159,24 +168,10 @@ int getRounds(string tourName) {
 
 
 }
-
-
 void removePlayer(vector<Person> &people) {
 
 
 }
-void readPlayers(string name, vector<Person> &people){
-    ifstream inFile(name + "Players.txt");
-
-    // This is for a display i think ryan you should code this part aswell since it is simply displaying
-    // Also put your sort function here or smth
-
-
-
-}
-
-
-
 void editTourMain() {
     ifstream inFile;
     vector<Person> people;
@@ -213,7 +208,7 @@ void editTourMain() {
 
 
     while(1) {
-
+        userInput = -1;
         while ((1 > userInput) || (userInput >5)) {
             editTourWindow();
             cin >> userInput;

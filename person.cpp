@@ -47,6 +47,10 @@ void Person::setMatchHistory(int rounds) {
         this->matchHistory.push_back("DNE");
     }
 }
+
+void Person::setCurHistory(vector<string> matches) {
+    this->matchHistory = matches;
+}
 vector<string> Person::getMatchHistory() {
     return matchHistory;
 }
