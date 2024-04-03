@@ -7,11 +7,11 @@ Person::Person() {
     this->score = 0;
 }
 
-void Person::setScore(int score) {
+void Person::setScore(double score) {
     this->score = score;
 }
 
-int Person::getScore() {
+double Person::getScore() {
     return score;
 }
 

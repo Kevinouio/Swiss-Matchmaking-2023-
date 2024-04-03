@@ -12,8 +12,8 @@ public:
     Person();
 
     //setter and getter for scores.
-    void setScore(int score);
-    int getScore();
+    void setScore(double score);
+    double getScore();
 
     //setter and getter for rating.
     void setRating(int rating);
@@ -37,7 +37,7 @@ private:
     int rating;
     string name;
     string USCFID;
-    int score;
+    double score;
     vector<string> playablePeople;
     vector<string> matchHistory;
 

@@ -51,7 +51,7 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     int rating;
     string name;
     string USCFID;
-    int score = 0;
+    double score = 0.0;
     ofstream txtFile(tourName + "Players.txt");
 
     cin.ignore();
@@ -78,6 +78,9 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     txtFile << score << endl;
 
     player.setMatchHistory(rounds);
+    for (int i = 0; i < rounds; i++) {
+        txtFile << "DNE" << endl;
+    }
 
     people.push_back(player);
 
@@ -101,7 +104,7 @@ void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
         player.setRating(stoi(fileInput));
 
         getline(inFile, fileInput);
-        player.setScore(stoi(fileInput));
+        player.setScore(stod(fileInput));
 
         getline(inFile, fileInput);
         player.setUSCFID(fileInput);
@@ -205,7 +208,7 @@ void editTourMain() {
     inFile.close();
 
     rounds = getRounds(tourName);
-
+    getCurrentPlayers(tourName, people, rounds);
 
     while(1) {
         userInput = -1;
