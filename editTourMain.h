@@ -22,6 +22,23 @@ void ratingSort(vector<Person> &unsortedVector, vector<Person> &sortedVector) {
     unsortedVector.erase(unsortedVector.begin() + index);
 }
 
+void sort(vector<Person> &people)
+{
+    for(int i = 0; i < people.size() - 1; i++)
+    {
+        for(int j = 0; j < people.size() - i - 1; j++)
+        {
+            if(people[j].getRating() < people[j + 1].getRating())
+            {
+                Person temp = people[j];
+
+                people[j] = people[j + 1];
+                people[j + 1] = temp;
+            }
+        }
+    }
+}
+
 void scoreSort(vector<Person>& unsortedVector, vector<Person>& sortedVector) {
     int highest = unsortedVector[0].getScore();
     int index = 0;
@@ -99,7 +116,9 @@ void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
 
         getline(inFile, fileInput);
         player.setName(fileInput);
-
+        if (inFile.eof()){
+            break;
+        }
         getline(inFile,fileInput);
         player.setRating(stoi(fileInput));
 
@@ -121,13 +140,11 @@ void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
     }
     inFile.close();
     // Insert a sorting algorithm right here for scores first and then by ratings
-    ratingSort(people, people);
 }
 
 void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
     string csvLine;
 
-    ratingSort(people, people);
     ofstream cvsLeaderboard(tourName + "Leaderboard.csv");
     csvLine = "Placement,Name,Rating,Score,";
     for(int i = 0; i < rounds; i++) {
@@ -142,16 +159,22 @@ void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
     // I don't really know how you want to display this because this is just the leaderboard all of the infor for this is going to be in the leaderboard file
 
     for (int i = 0; i < people.size(); i++) {
+        vector<string> curPlayerHistory;
+
         csvLine = to_string(i+1) + ",";
         csvLine += people.at(i).getName() + ",";
         csvLine += to_string(people.at(i).getRating()) + ",";
         csvLine += to_string(people.at(i).getScore()) + ",";
-        for(int i = 0; i < rounds; i++) {
+
+        curPlayerHistory = people.getMatchHistory();
+
+        for(int i = 0; i < curPlayerHistory.size(); i++) {
             if(i == rounds - 1) {
-                csvLine += "DNE";
+                csvLine += curPlayerHistory.at(i);
                 break;
             }
-            csvLine += "DNE,";
+
+            csvLine += curPlayerHistory.at(i) + ",";
         }
         cvsLeaderboard << csvLine << endl;
     }

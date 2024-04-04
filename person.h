@@ -29,6 +29,7 @@ public:
 
     void setMatchHistory(int rounds);
     void setCurHistory(vector<string> matches);
+
     vector<string> getMatchHistory();
 
 

@@ -51,6 +51,7 @@ void Person::setMatchHistory(int rounds) {
 void Person::setCurHistory(vector<string> matches) {
     this->matchHistory = matches;
 }
+
 vector<string> Person::getMatchHistory() {
     return matchHistory;
 }
