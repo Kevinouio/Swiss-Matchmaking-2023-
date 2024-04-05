@@ -2,6 +2,7 @@
 #include <iostream>
 using namespace std;
 
-void viewMain()  {
-    cout << "HAI";
+void viewMain() {
+
+    cout <<"HAI";
 }

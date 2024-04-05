@@ -1,9 +1,6 @@
-#ifndef EDITTOURMAIN_H
-#define EDITTOURMAIN_H
-
+#ifndef VIEWMAIN_H
+#define VIEWMAIN_H
 
 void viewMain();
 
-
-
-#endif // EDITTOURMAIN_H
+#endif // VIEWMAIN_H

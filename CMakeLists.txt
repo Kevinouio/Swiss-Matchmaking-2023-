@@ -6,17 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Chess_Swiss_System main.cpp
-    outputs.h
-    person.h person.cpp
-    viewmain.h viewmain.cpp
     newtourmain.h
+    person.h person.cpp
+    outputs.h
+    viewmain.h viewmain.cpp
     editTourMain.h
-    createPairings.h
-
-
-
-
-)
+    createPairings.h)
 
 include(GNUInstallDirs)
 install(TARGETS Chess_Swiss_System

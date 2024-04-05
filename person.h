@@ -27,7 +27,7 @@ public:
     void setUSCFID(string USCFID);
     string getUSCFID();
 
-    void updateMatchHistory(int currRound, string result, int matchNum);
+    void updateMatchHistory(int currRound, string result, int matchNum, string color);
     void setMatchHistory(int rounds);
     void setCurHistory(vector<string> matches);
 

@@ -15,7 +15,25 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     string name;
     string USCFID;
     double score = 0.0;
+    string fileInput = "";
+    vector<string> stringlines;
+    ifstream txtinFile(tourName + "Players.txt");
+
+    while (!txtinFile.eof()) {
+        getline(txtinFile,fileInput);
+        stringlines.push_back(fileInput);
+
+    }
+    txtinFile.close();
     ofstream txtFile(tourName + "Players.txt");
+
+    for (int i = 0; i < stringlines.size(); i++) {
+        if (i == stringlines.size()-1) {
+            txtFile << stringlines.at(i);
+            continue;
+        }
+        txtFile << stringlines.at(i) << endl;
+    }
 
     cin.ignore();
     cout << "Name of Player?\nEnter:  ";
@@ -135,7 +153,7 @@ int getRounds(string tourName) {
         tokens.push_back(fileLine);
     }
 
-    return stoi(tokens.at(5));
+    return stoi(tokens.at(4));
 
 
 }
@@ -150,7 +168,7 @@ int getCurrRounds(string tourName) {
         tokens.push_back(fileLine);
     }
 
-    return stoi(tokens.at(6));
+    return stoi(tokens.at(5));
 
 
 }
@@ -196,6 +214,11 @@ void editTourMain() {
     currRound = getCurrRounds(tourName);
     getCurrentPlayers(tourName, people, rounds);
 
+    for (int i = 0; i < people.size() ; i++) {
+        cout << people.at(i).getScore();
+    }
+
+
     while(1) {
         userInput = -1;
         while ((1 > userInput) || (userInput >5)) {
@@ -227,14 +250,14 @@ void editTourMain() {
                 cout << "Whot won? (W=White D= Draw B=Black) \nEnter:  ";
                 cin >> result;
                 if (!((result != "W") || (result != "D") || (result != "B"))) {
-                        //Insert error message
+                    //Insert error message
                     continue;
                 }
                 break;
             }
 
             \
-            for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
+                for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
                 if ((stoi(matchNum) % 2)+1 == 0) {
                     color = "BL";
                 }

@@ -4,18 +4,18 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-
+#include <math.h>
 using namespace std;
 
 
-
+// Bubble sort
 void sortRatings(vector<Person> &people)
 {
     for(int i = 0; i < people.size() - 1; i++)
     {
         for(int j = 0; j < people.size() - i - 1; j++)
         {
-            if(people[j].getRating() < people[j + 1].getRating())
+            if(people.at(j).getRating() < people.at(j+1).getRating())
             {
                 Person temp = people[j];
 
@@ -43,7 +43,7 @@ vector<vector<Person>> pigeionHoleSort(int currRound, vector<Person> &people) {
     }
 
     for (int i = 0; i < scores.size(); i++) {
-        sortRatings(scores.at(i));
+        //sortRatings(scores.at(i));
     }
 
 
@@ -59,14 +59,14 @@ vector<vector<Person>> pigeionHoleSort(int currRound, vector<Person> &people) {
 
 void giveBye(vector<vector<Person>> &scores, int currRound){
     string result = "BYE";
-    scores.at(-1).at(0).updateMatchHistory(currRound, result);
+    scores.at(-1).at(0).updateMatchHistory(currRound, result,0,"");
 }
 
 
 vector<vector<Person>> createPairings(vector<Person> &people,string tourName, int currRound) {
     //sorting algorithm for the people vector
 
-    ofstream csvPairings(tourName + "Round_" + to_string(currRound));
+    ofstream csvPairings(tourName + "Round_" + to_string(currRound) + ".csv");
     string csvLine;
     vector<vector<Person>> scores;
     vector<vector<Person>> tempScores;
@@ -90,9 +90,9 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
                 continue;
             }
             pairs.push_back(people.at(0));
-            people.erase(0);
+            people.erase(people.begin());
             pairs.push_back(people.at(-1));
-            people.erase(-1);
+            people.erase(people.begin() - 1);
 
 
 
@@ -115,17 +115,7 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
+    return matches;
 
 
 }

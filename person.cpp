@@ -48,7 +48,7 @@ void Person::updateMatchHistory(int currRound, string result, int matchNum, stri
 
     playerResult = result + " " + to_string(matchNum) + " " + color;
     if (result == "BYE") {
-        this->matchHistory.at(currRound) = playerResult;
+        this->matchHistory.at(currRound) = "BYE";
         this->score += 1;
     }
     else if (result == "W"){
