@@ -9,60 +9,6 @@
 
 using namespace std;
 
-void ratingSort(vector<Person> &unsortedVector, vector<Person> &sortedVector) {
-    int highest = unsortedVector[0].getRating();
-    int index = 0;
-    for (int i = 0; i < unsortedVector.size(); i++) {
-        if (unsortedVector[i].getRating() > highest) {
-            highest = unsortedVector[i].getRating();
-            index = i;
-        }
-    }
-    sortedVector.push_back(unsortedVector[index]);
-    unsortedVector.erase(unsortedVector.begin() + index);
-}
-
-void sort(vector<Person> &people)
-{
-    for(int i = 0; i < people.size() - 1; i++)
-    {
-        for(int j = 0; j < people.size() - i - 1; j++)
-        {
-            if(people[j].getRating() < people[j + 1].getRating())
-            {
-                Person temp = people[j];
-
-                people[j] = people[j + 1];
-                people[j + 1] = temp;
-            }
-        }
-    }
-}
-
-void scoreSort(vector<Person>& unsortedVector, vector<Person>& sortedVector) {
-    int highest = unsortedVector[0].getScore();
-    int index = 0;
-    for (int i = 0; i < unsortedVector.size(); i++) {
-        if (unsortedVector[i].getScore() > highest) {
-            highest = unsortedVector[i].getScore();
-            index = i;
-        }
-    }
-    sortedVector.push_back(unsortedVector[index]);
-    unsortedVector.erase(unsortedVector.begin() + index);
-}
-
-
-void roundOneSort(vector<Person> sortedVector) {
-    if (sortedVector.size() % 2 == 1) {
-        cout << sortedVector[0].getName() << " : By";
-        sortedVector.erase(sortedVector.begin());
-    }
-    for (int i = 0; i < sortedVector.size() / 2; i++) {
-        cout << sortedVector[i].getName() << " : " << sortedVector[sortedVector.size() - 1 - i].getName();
-    }
-}
-
 void addPlayer(string tourName, vector<Person> &people, int rounds) {
     Person player;
     int rating;
@@ -102,9 +48,6 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     people.push_back(player);
 
 }
-
-
-
 
 void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
     ifstream inFile(tourName + "Players.txt");
@@ -146,6 +89,7 @@ void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
     string csvLine;
 
     ofstream cvsLeaderboard(tourName + "Leaderboard.csv");
+
     csvLine = "Placement,Name,Rating,Score,";
     for(int i = 0; i < rounds; i++) {
         if(i == rounds - 1) {
@@ -157,6 +101,7 @@ void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
     cvsLeaderboard << csvLine << endl;
 
     // I don't really know how you want to display this because this is just the leaderboard all of the infor for this is going to be in the leaderboard file
+    //Also put sorting algorithm in here as well
 
     for (int i = 0; i < people.size(); i++) {
         vector<string> curPlayerHistory;
@@ -166,7 +111,7 @@ void viewLeaderboard(vector<Person> &people, string tourName, int rounds) {
         csvLine += to_string(people.at(i).getRating()) + ",";
         csvLine += to_string(people.at(i).getScore()) + ",";
 
-        curPlayerHistory = people.getMatchHistory();
+        curPlayerHistory = people.at(i).getMatchHistory();
 
         for(int i = 0; i < curPlayerHistory.size(); i++) {
             if(i == rounds - 1) {
@@ -194,6 +139,21 @@ int getRounds(string tourName) {
 
 
 }
+
+int getCurrRounds(string tourName) {
+    ifstream inFile(tourName + ".csv");
+    string fileLine = "";
+    vector<string> tokens;
+
+    getline(inFile, fileLine);
+    while (getline(inFile, fileLine, ',')) {
+        tokens.push_back(fileLine);
+    }
+
+    return stoi(tokens.at(6));
+
+
+}
 void removePlayer(vector<Person> &people) {
 
 
@@ -204,8 +164,10 @@ void editTourMain() {
     string tourName;
     int userInput = -1;
     int rounds;
-
-
+    int currRound;
+    vector<vector<Person>> matches;
+    string matchNum = "0";
+    string result = "";
 
     cin.ignore();
     while (true) {
@@ -231,6 +193,7 @@ void editTourMain() {
     inFile.close();
 
     rounds = getRounds(tourName);
+    currRound = getCurrRounds(tourName);
     getCurrentPlayers(tourName, people, rounds);
 
     while(1) {
@@ -247,12 +210,50 @@ void editTourMain() {
             addPlayer(tourName, people, rounds);
         }
         else if (userInput ==2) {
+            string color = "";
+            while (1) {
+                cout << "Which match would you like to update? \nEnter:  ";
+                cin >> matchNum;
+                for (int i = 0; i < matchNum.size(); i++) {
+                    if (isdigit(matchNum.at(i))) {
+                        errorMessageValue();
+                        continue;
+                    }
+                }
+                break;
+            }
+
+            while (1) {
+                cout << "Whot won? (W=White D= Draw B=Black) \nEnter:  ";
+                cin >> result;
+                if (!((result != "W") || (result != "D") || (result != "B"))) {
+                        //Insert error message
+                    continue;
+                }
+                break;
+            }
+
+            \
+            for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
+                if ((stoi(matchNum) % 2)+1 == 0) {
+                    color = "BL";
+                }
+                else {
+                    color = "WH";
+                }
+                matches.at(stoi(matchNum) - 1).at(i).updateMatchHistory(currRound, result, stoi(matchNum), color);
+            }
+
+
+
+
 
         }
         else if (userInput ==3) {
-            createPairings(people);
+            matches = createPairings(people, tourName, currRound);
         }
         else if (userInput == 4) {
+            pigeionHoleSort(currRound,people);
             viewLeaderboard(people, tourName, rounds);
         }
         else if (userInput ==5) {

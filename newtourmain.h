@@ -20,6 +20,7 @@ void newTourMain(){
     int rounds;
     string date;
     string csvLine;
+    int currRound = 1;
 
     //gets the name of the tournmanet
     cout << "What's the name of the tournment? \nEnter:  ";
@@ -57,9 +58,9 @@ void newTourMain(){
 
 
     ofstream csvFile(tourName + ".csv");
-    csvLine = "Tournament,Organizer,Location,Date,Time Control,Rounds";
+    csvLine = "Tournament,Organizer,Location,Date,Time Control,Rounds,Current Round";
     csvFile << csvLine << endl;
-    csvLine = tourName + "," + organizer + "," + location + "," + date + "," + timeControl + "," + to_string(rounds);
+    csvLine = tourName + "," + organizer + "," + location + "," + date + "," + timeControl + "," + to_string(rounds) + "," + to_string(currRound);
     csvFile << csvLine << endl << endl;
     csvFile.close();
 

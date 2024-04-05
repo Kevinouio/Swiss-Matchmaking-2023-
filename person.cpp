@@ -42,6 +42,25 @@ string Person::getUSCFID() {
     return USCFID;
 }
 
+void Person::updateMatchHistory(int currRound, string result, int matchNum, string color) {
+
+    string playerResult;
+
+    playerResult = result + " " + to_string(matchNum) + " " + color;
+    if (result == "BYE") {
+        this->matchHistory.at(currRound) = playerResult;
+        this->score += 1;
+    }
+    else if (result == "W"){
+        this->matchHistory.at(currRound) = playerResult;
+        this->score +=1;
+    }
+    else {
+        this->matchHistory.at(currRound) = playerResult;
+    }
+}
+
+
 void Person::setMatchHistory(int rounds) {
     for(int i = 0; i < rounds; i++) {
         this->matchHistory.push_back("DNE");
