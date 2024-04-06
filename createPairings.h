@@ -61,7 +61,7 @@ vector<vector<Person>> pigeionHoleSort(int currRound, vector<Person> &people) {
 
 void giveBye(vector<vector<Person>> &scores, int currRound){
     string result = "BYE";
-    scores.at(-1).at(0).updateMatchHistory(currRound, result,0,"");
+    scores.at(scores.size()-1).at(0).updateMatchHistory(currRound, result,0,"");
 }
 
 
@@ -81,34 +81,36 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     csvLine = "Match No.,Player 1,Result,Player 2";
     csvPairings << csvLine << endl;
 
-
+    cout << "Here" << endl;
 
     scores = pigeionHoleSort(currRound, people);
     if (currRound == 1) {
-        for (int i = 0; i< ceil(people.size()/2); i++) {
+        int repeats = ceil(people.size()/2);
+        for (int i = 0; i< repeats; i++) {
             vector<Person> pairs;
             if (people.size() % 2 == 1) {
                 giveBye(scores, currRound);
+                people.erase(people.begin());
+
                 continue;
             }
             pairs.push_back(people.at(0));
             people.erase(people.begin());
-            pairs.push_back(people.at(-1));
-            people.erase(people.begin() - 1);
+            pairs.push_back(people.at(people.size()-1));
+            people.pop_back();
 
 
 
             matches.push_back(pairs);
         }
-
         for (int i = 0; i < matches.size() ; i++) {
             if (i % 2 == 0) {
-                csvLine = to_string(i) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),";
+                csvLine = to_string(+1) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
                 csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),";
                 csvPairings << csvLine << endl;
             }
             else if (i % 2 == 1) {
-                csvLine = to_string(i) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),";
+                csvLine = to_string(i+1) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
                 csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),";
                 csvPairings << csvLine << endl;
             }
