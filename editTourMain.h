@@ -178,6 +178,46 @@ int getCurrRounds(string tourName) {
 }
 
 void updateCurrRound(int currRound, string tourName);
+
+vector<vector<Person>> getPairings(string tourName, int currRound, vector<Person> people) {
+    vector<vector<Person>> matches;
+    vector<string> csvLine;
+    string fileLine;
+    Person player;
+    ifstream inFile (tourName + "Round_" + to_string(currRound) + ".csv");
+    vector<string> names;
+    vector<Person> matchedPeople;
+
+    getline(inFile, fileLine);
+    getline(inFile, fileLine);
+
+    while (!inFile.eof()) {
+
+        getline(inFile,fileLine, ',');
+        getline(inFile,fileLine, '(');
+        names.push_back(fileLine);
+        getline(inFile,fileLine, ',');
+    }
+    inFile.close();
+    for (int i = 0;i < names.size();i++) {
+        for (int j = 0; j < people.size(); j++) {
+            if (people.at(j).getName() == names.at(i)) {
+                matchedPeople.push_back(people.at(j));
+                break;
+            }
+        }
+    }
+    for (int i = 0;i < matchedPeople.size()/2;i++) {
+        vector<Person> pairs;
+        pairs.push_back(matchedPeople.at(0));
+        matchedPeople.erase(matchedPeople.begin());
+        pairs.push_back(matchedPeople.at(0));
+        matchedPeople.erase(matchedPeople.begin());
+        matches.push_back(pairs);
+    }
+    return matches;
+}
+
 void removePlayer(vector<Person> &people) {
 
 
@@ -239,17 +279,12 @@ void editTourMain() {
     }
 
 
-    /*
-       Okay so here Ryan is where you just want to dispay the information about the tournament so i'll leave you with this parth of the code
-
-     */
-
     inFile.close();
 
     rounds = getRounds(tourName);
     currRound = getCurrRounds(tourName);
     getCurrentPlayers(tourName, people, rounds);
-
+    matches = getPairings(tourName, currRound, people);
 
 
     while(1) {
@@ -267,6 +302,7 @@ void editTourMain() {
         }
         else if (userInput ==2) {
             string color = "";
+            int index;
             while (1) {
                 cout << "Which match would you like to update? \nEnter:  ";
                 cin >> matchNum;
@@ -277,6 +313,7 @@ void editTourMain() {
                     }
                 }
                 break;
+
             }
 
             while (1) {
@@ -290,7 +327,6 @@ void editTourMain() {
                     break;
                 }
             }
-
             for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
                 if ((stoi(matchNum) % 2)+1 == 0) {
                     color = "BL";
@@ -298,8 +334,18 @@ void editTourMain() {
                 else {
                     color = "WH";
                 }
-                matches.at(stoi(matchNum) - 1).at(i).updateMatchHistory(currRound, result, stoi(matchNum), color);
+                for (int j = 0; people.size(); j++) {
+                    if (matches.at(stoi(matchNum) - 1).at(i).getName() == people.at(j).getName()) {
+                        index = j;
+                        break;
+                    }
+
+                }
+
+
+                people.at(index).updateMatchHistory(currRound, result, stoi(matchNum), color);
             }
+            updatePlayers(people, tourName);
 
 
 
@@ -311,7 +357,7 @@ void editTourMain() {
             updatePlayers(people, tourName);
         }
         else if (userInput == 4) {
-            pigeionHoleSort(currRound + 1,people);
+            //pigeionHoleSort(currRound + 1,people);
             viewLeaderboard(people, tourName, rounds);
         }
         else if (userInput ==5) {

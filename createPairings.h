@@ -34,17 +34,24 @@ vector<vector<Person>> pigeionHoleSort(int currRound, vector<Person> &people) {
 
     vector<vector<Person>> scores;
     string vectorName = "";
+
+
     for (int i = 0; i < (2 * (currRound-1) ) + 1; i++) {
         vector<Person> scoreAmount;
         scores.push_back(scoreAmount);
     }
+
     for(int i = 0; i < people.size(); i++) {
         //hardest line of code to write tbh but this seperates each player into their respective score group
 
         scores.at((people.at(i).getScore() / 0.5)).push_back(people.at(i));
     }
 
+
     for (int i = 0; i < scores.size(); i++) {
+        if (scores.at(i).size() == 0) {
+            continue;
+        }
         sortRatings(scores.at(i));
     }
 
@@ -83,9 +90,7 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
 
 
     tempPeople = people;
-            cout << "HAi" << endl;
-    scores = pigeionHoleSort(currRound, people);
-                        cout << "HAi" << endl;
+    scores = pigeionHoleSort(currRound + 1, people);
     tempScores = scores;
 
 
@@ -105,7 +110,6 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
 
                 player = scores.at(scores.size()-1).at(0);
                 for (int i = 0; i < people.size(); i++) {
-
                     if (player.getName() == people.at(i).getName()) {
                         index = i;
                     }
