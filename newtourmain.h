@@ -57,10 +57,10 @@ void newTourMain(){
 
 
     ofstream csvFile(tourName + ".csv");
-    csvLine = "Tournament,Organizer,Location,Date,Time Control,Rounds";
+    csvLine = "Tournament,Organizer,Location,Date,Time Control,Rounds,Current Round";
     csvFile << csvLine << endl;
-    csvLine = tourName + "," + organizer + "," + location + "," + date + "," + timeControl + "," + to_string(rounds);
-    csvFile << csvLine << endl << endl;
+    csvLine = tourName + "," + organizer + "," + location + "," + date + "," + timeControl + "," + to_string(rounds) + ",1";
+    csvFile << csvLine << endl ;
     csvFile.close();
 
     ofstream cvsLeaderboard(tourName + "Leaderboard.csv");
@@ -71,6 +71,7 @@ void newTourMain(){
         }
         csvLine += "Round " + to_string(i) + ",";
     }
+
     cvsLeaderboard << csvLine << endl;
 
     ofstream txtPeopleFile(tourName +"Players.txt");

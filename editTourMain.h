@@ -84,10 +84,13 @@ void getCurrentPlayers(string tourName, vector<Person> &people, int &rounds) {
         player.setRating(stoi(fileInput));
 
         getline(inFile, fileInput);
-        player.setScore(stod(fileInput));
+        player.setUSCFID(fileInput);
+
 
         getline(inFile, fileInput);
-        player.setUSCFID(fileInput);
+        player.setScore(stod(fileInput));
+
+
 
         for (int i = 0; i < rounds; i++) {
             getline(inFile, fileInput);
@@ -153,7 +156,7 @@ int getRounds(string tourName) {
         tokens.push_back(fileLine);
     }
 
-    return stoi(tokens.at(4));
+    return stoi(tokens.at(5));
 
 
 }
@@ -168,7 +171,7 @@ int getCurrRounds(string tourName) {
         tokens.push_back(fileLine);
     }
 
-    return stoi(tokens.at(5));
+    return stoi(tokens.at(6));
 
 
 }
@@ -214,9 +217,6 @@ void editTourMain() {
     currRound = getCurrRounds(tourName);
     getCurrentPlayers(tourName, people, rounds);
 
-    for (int i = 0; i < people.size() ; i++) {
-        cout << people.at(i).getScore();
-    }
 
 
     while(1) {

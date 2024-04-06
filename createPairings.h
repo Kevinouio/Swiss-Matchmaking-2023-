@@ -29,8 +29,9 @@ void sortRatings(vector<Person> &people)
 
 // So this is going to create a pairing file in which it creaes a csv list for the pairing for the current round
 
-//This is going to seperate the players into different vectors depending on their array.
+//This is going to seperate the players into different vectors depending on their score.
 vector<vector<Person>> pigeionHoleSort(int currRound, vector<Person> &people) {
+
     vector<vector<Person>> scores;
     string vectorName = "";
     for (int i = 0; i < (2 * (currRound-1) ) + 1; i++) {
@@ -39,16 +40,17 @@ vector<vector<Person>> pigeionHoleSort(int currRound, vector<Person> &people) {
     }
     for(int i = 0; i < people.size(); i++) {
         //hardest line of code to write tbh but this seperates each player into their respective score group
-        scores.at(people.at(i).getScore() / 0.5).push_back(people.at(i));
+
+        scores.at((people.at(i).getScore() / 0.5)).push_back(people.at(i));
     }
 
     for (int i = 0; i < scores.size(); i++) {
-        //sortRatings(scores.at(i));
+        sortRatings(scores.at(i));
     }
 
 
-    people = scores.at(0);
-    for (int i = 1; i < scores.size(); i++) {
+    people.clear();
+    for (int i = (scores.size()-1); i >= 0; i--) {
         people.insert(people.end(), scores.at(i).begin(), scores.at(i).end());
     }
 
