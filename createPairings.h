@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <math.h>
+#include <cmath>
 using namespace std;
 
 
@@ -59,17 +59,17 @@ vector<vector<Person>> pigeionHoleSort(int currRound, vector<Person> &people) {
 
 }
 
-void giveBye(vector<vector<Person>> &scores, int currRound){
+void giveBye(Person &player, int currRound){
     string result = "BYE";
-    scores.at(scores.size()-1).at(0).updateMatchHistory(currRound, result,0,"");
+    player.updateMatchHistory(currRound, result,0,"");
 }
 
 
 vector<vector<Person>> createPairings(vector<Person> &people,string tourName, int currRound) {
     //sorting algorithm for the people vector
-
     ofstream csvPairings(tourName + "Round_" + to_string(currRound) + ".csv");
     string csvLine;
+    vector<Person> tempPeople;
     vector<vector<Person>> scores;
     vector<vector<Person>> tempScores;
     vector<vector<Person>> matches;
@@ -81,23 +81,44 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     csvLine = "Match No.,Player 1,Result,Player 2";
     csvPairings << csvLine << endl;
 
-    cout << "Here" << endl;
 
+    tempPeople = people;
+            cout << "HAi" << endl;
     scores = pigeionHoleSort(currRound, people);
+                        cout << "HAi" << endl;
+    tempScores = scores;
+
+
+    //Round one with no conditions are being broken
     if (currRound == 1) {
-        int repeats = ceil(people.size()/2);
+        //This part can be rewritten because ceiling division just doesn't work for some reason
+        int repeats = ceil(tempPeople.size()/2);
+        if (tempPeople.size() % 2 == 1) {
+            repeats++;
+        }
+
         for (int i = 0; i< repeats; i++) {
             vector<Person> pairs;
-            if (people.size() % 2 == 1) {
-                giveBye(scores, currRound);
-                people.erase(people.begin());
+            Person player;
+            int index = 0;
+            if (tempPeople.size() % 2 == 1) {
+
+                player = scores.at(scores.size()-1).at(0);
+                for (int i = 0; i < people.size(); i++) {
+
+                    if (player.getName() == people.at(i).getName()) {
+                        index = i;
+                    }
+                }
+                giveBye(people.at(index), currRound);
+                tempPeople.erase(tempPeople.begin());
 
                 continue;
             }
-            pairs.push_back(people.at(0));
-            people.erase(people.begin());
-            pairs.push_back(people.at(people.size()-1));
-            people.pop_back();
+            pairs.push_back(tempPeople.at(0));
+            tempPeople.erase(tempPeople.begin());
+            pairs.push_back(tempPeople.at(tempPeople.size()-1));
+            tempPeople.pop_back();
 
 
 
@@ -105,19 +126,32 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
         }
         for (int i = 0; i < matches.size() ; i++) {
             if (i % 2 == 0) {
-                csvLine = to_string(+1) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
+                csvLine = to_string(i+1) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
                 csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),";
                 csvPairings << csvLine << endl;
             }
             else if (i % 2 == 1) {
-                csvLine = to_string(i+1) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
-                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),";
+                csvLine = to_string(i+1) + ".," + matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
+                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),";
                 csvPairings << csvLine << endl;
             }
         }
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     return matches;
 

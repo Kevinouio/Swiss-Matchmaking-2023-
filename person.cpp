@@ -45,7 +45,7 @@ string Person::getUSCFID() {
 void Person::updateMatchHistory(int currRound, string result, int matchNum, string color) {
 
     string playerResult;
-
+    currRound--;
     playerResult = result + " " + to_string(matchNum) + " " + color;
     if (result == "BYE") {
         this->matchHistory.at(currRound) = "BYE";

@@ -19,14 +19,15 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     vector<string> stringlines;
     ifstream txtinFile(tourName + "Players.txt");
 
+    //Gets each player that was already in the list
     while (!txtinFile.eof()) {
         getline(txtinFile,fileInput);
         stringlines.push_back(fileInput);
-
     }
+
     txtinFile.close();
     ofstream txtFile(tourName + "Players.txt");
-
+    //Rewrites the players in the txt file
     for (int i = 0; i < stringlines.size(); i++) {
         if (i == stringlines.size()-1) {
             txtFile << stringlines.at(i);
@@ -175,10 +176,42 @@ int getCurrRounds(string tourName) {
 
 
 }
+
+void updateCurrRound(int currRound, string tourName);
 void removePlayer(vector<Person> &people) {
 
 
 }
+
+void updatePlayers(vector<Person> &people, string tourName) {
+    string fileInput;
+    vector<string> stringlines;
+    ofstream txtFile(tourName + "Players.txt");
+    //Rewrites the players in the txt file
+
+    for (int i = 0; i < people.size(); i++ ) {
+        txtFile << people.at(i).getName() << endl;
+
+        txtFile << people.at(i).getRating() << endl;
+
+        txtFile << people.at(i).getUSCFID() << endl;
+
+        txtFile << people.at(i).getScore() << endl;
+
+        vector<string> matchHistory = people.at(i).getMatchHistory();
+
+        for (int j = 0; j < matchHistory.size(); j++) {
+            txtFile << matchHistory.at(j) << endl;
+        }
+    }
+    txtFile.close();
+}
+
+
+
+
+
+
 void editTourMain() {
     ifstream inFile;
     vector<Person> people;
@@ -238,7 +271,7 @@ void editTourMain() {
                 cout << "Which match would you like to update? \nEnter:  ";
                 cin >> matchNum;
                 for (int i = 0; i < matchNum.size(); i++) {
-                    if (isdigit(matchNum.at(i))) {
+                    if (!(isdigit(matchNum.at(i)))) {
                         errorMessageValue();
                         continue;
                     }
@@ -247,17 +280,18 @@ void editTourMain() {
             }
 
             while (1) {
-                cout << "Whot won? (W=White D= Draw B=Black) \nEnter:  ";
+                cout << "Who won? (W=White D= Draw B=Black) \nEnter:  ";
                 cin >> result;
                 if (!((result != "W") || (result != "D") || (result != "B"))) {
                     //Insert error message
                     continue;
                 }
-                break;
+                else {
+                    break;
+                }
             }
 
-            \
-                for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
+            for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
                 if ((stoi(matchNum) % 2)+1 == 0) {
                     color = "BL";
                 }
@@ -274,9 +308,10 @@ void editTourMain() {
         }
         else if (userInput ==3) {
             matches = createPairings(people, tourName, currRound);
+            updatePlayers(people, tourName);
         }
         else if (userInput == 4) {
-            pigeionHoleSort(currRound,people);
+            pigeionHoleSort(currRound + 1,people);
             viewLeaderboard(people, tourName, rounds);
         }
         else if (userInput ==5) {
