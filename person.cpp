@@ -55,6 +55,10 @@ void Person::updateMatchHistory(int currRound, string result, int matchNum, stri
         this->matchHistory.at(currRound) = playerResult;
         this->score +=1;
     }
+    else if (result == "D") {
+        this->matchHistory.at(currRound) = playerResult;
+        this->score += 0.5;
+    }
     else {
         this->matchHistory.at(currRound) = playerResult;
     }

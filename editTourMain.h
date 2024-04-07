@@ -247,7 +247,82 @@ void updatePlayers(vector<Person> &people, string tourName) {
     txtFile.close();
 }
 
+void updateScore(vector<Person> &people, string tourName, vector<vector<Person>> &matches, int currRound) {
+    string color = "";
+    int index;
+    string matchNum = "0";
+    string result;
+    string tempResult = result;
+    while (1) {
 
+        cout << "Which match would you like to update? \nEnter:  ";
+        cin >> matchNum;
+        for (int i = 0; i < matchNum.size(); i++) {
+            if (!(isdigit(matchNum.at(i)))) {
+                errorMessageValue();
+                continue;
+            }
+        }
+        break;
+
+    }
+
+    while (1) {
+        cout << "Who won? (W=White D= Draw B=Black) \nEnter:  ";
+        cin >> tempResult;
+        if (!((result != "W") || (result != "D") || (result != "B"))) {
+            //Insert error message
+            continue;
+        }
+        else {
+            break;
+        }
+    }
+    for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
+
+        for (int j = 0; people.size(); j++) {
+            if (matches.at(stoi(matchNum) - 1).at(i).getName() == people.at(j).getName()) {
+                index = j;
+                break;
+            }
+
+        }
+
+
+
+
+
+
+
+        if (((i + stoi(matchNum))+1 % 2) == 0) {
+            color = "WH";
+            if (tempResult == "W") {
+                result = "L";
+            }
+            else if (tempResult == "B") {
+                result = "W";
+            }
+        }
+        else {
+            color = "BL";
+            if (tempResult == "B") {
+                result = "L";
+            }
+            else if (tempResult == " W") {
+                result = "W";
+            }
+        }
+
+
+        people.at(index).updateMatchHistory(currRound, result, stoi(matchNum), color);
+    }
+    updatePlayers(people, tourName);
+
+
+
+
+
+}
 
 
 
@@ -260,7 +335,7 @@ void editTourMain() {
     int rounds;
     int currRound;
     vector<vector<Person>> matches;
-    string matchNum = "0";
+
     string result = "";
 
     cin.ignore();
@@ -301,56 +376,7 @@ void editTourMain() {
             addPlayer(tourName, people, rounds);
         }
         else if (userInput ==2) {
-            string color = "";
-            int index;
-            while (1) {
-                cout << "Which match would you like to update? \nEnter:  ";
-                cin >> matchNum;
-                for (int i = 0; i < matchNum.size(); i++) {
-                    if (!(isdigit(matchNum.at(i)))) {
-                        errorMessageValue();
-                        continue;
-                    }
-                }
-                break;
-
-            }
-
-            while (1) {
-                cout << "Who won? (W=White D= Draw B=Black) \nEnter:  ";
-                cin >> result;
-                if (!((result != "W") || (result != "D") || (result != "B"))) {
-                    //Insert error message
-                    continue;
-                }
-                else {
-                    break;
-                }
-            }
-            for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
-                if ((stoi(matchNum) % 2)+1 == 0) {
-                    color = "BL";
-                }
-                else {
-                    color = "WH";
-                }
-                for (int j = 0; people.size(); j++) {
-                    if (matches.at(stoi(matchNum) - 1).at(i).getName() == people.at(j).getName()) {
-                        index = j;
-                        break;
-                    }
-
-                }
-
-
-                people.at(index).updateMatchHistory(currRound, result, stoi(matchNum), color);
-            }
-            updatePlayers(people, tourName);
-
-
-
-
-
+            updateScore(people, tourName, matches, currRound);
         }
         else if (userInput ==3) {
             matches = createPairings(people, tourName, currRound);
