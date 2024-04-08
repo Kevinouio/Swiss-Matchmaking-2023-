@@ -72,6 +72,18 @@ void giveBye(Person &player, int currRound){
 }
 
 
+int findRank(vector<Person> people, Person player){
+    int rank = 0;
+    for (int i = 0; i < people.size(); i++) {
+        if (player.getName() == people.at(i).getName()) {
+            rank = i;
+            break;
+        }
+    }
+    return rank + 1 ;
+}
+
+
 vector<vector<Person>> createPairings(vector<Person> &people,string tourName, int currRound) {
     //sorting algorithm for the people vector
     ofstream csvPairings(tourName + "Round_" + to_string(currRound) + ".csv");
@@ -82,10 +94,10 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     vector<vector<Person>> matches;
 
 
-    csvLine = ",White,,Black";
+    csvLine = ",,,White,,,Black";
     csvPairings << csvLine << endl;
 
-    csvLine = "Match No.,Player 1,Result,Player 2";
+    csvLine = "Match No.,Rank,Result,Player 1,Result,Rank,Player 2";
     csvPairings << csvLine << endl;
 
 
@@ -130,16 +142,33 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
         }
         for (int i = 0; i < matches.size() ; i++) {
             if (i % 2 == 0) {
-                csvLine = to_string(i+1) + ".," + matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
-                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),";
+                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(0))) + ",,";
+                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
+
+                csvLine += to_string(findRank(people, matches.at(i).at(1))) + ",";
+                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
                 csvPairings << csvLine << endl;
             }
             else if (i % 2 == 1) {
-                csvLine = to_string(i+1) + ".," + matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
-                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),";
+                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(1))) + ",,";
+                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
+
+
+                csvLine += to_string(findRank(people, matches.at(i).at(0))) + ",";
+                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
                 csvPairings << csvLine << endl;
             }
         }
+
+
+    }
+
+    else {
+
+
+
+
+
 
 
     }

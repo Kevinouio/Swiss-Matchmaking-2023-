@@ -177,7 +177,7 @@ int getCurrRounds(string tourName) {
 
 }
 
-void updateCurrRound(int currRound, string tourName);
+void updateCurrRound(int &currRound, string tourName);
 
 vector<vector<Person>> getPairings(string tourName, int currRound, vector<Person> people) {
     vector<vector<Person>> matches;
@@ -194,11 +194,23 @@ vector<vector<Person>> getPairings(string tourName, int currRound, vector<Person
     while (!inFile.eof()) {
 
         getline(inFile,fileLine, ',');
+        getline(inFile,fileLine, ',');
+        getline(inFile,fileLine, ',');
         getline(inFile,fileLine, '(');
         names.push_back(fileLine);
         getline(inFile,fileLine, ',');
+        getline(inFile,fileLine, ',');
+        getline(inFile,fileLine, ',');
+        getline(inFile, fileLine, '(');
+        names.push_back(fileLine);
+        getline(inFile,fileLine, ',');
+        getline(inFile,fileLine, ',');
+
     }
     inFile.close();
+
+
+
     for (int i = 0;i < names.size();i++) {
         for (int j = 0; j < people.size(); j++) {
             if (people.at(j).getName() == names.at(i)) {
@@ -207,7 +219,7 @@ vector<vector<Person>> getPairings(string tourName, int currRound, vector<Person
             }
         }
     }
-    for (int i = 0;i < matchedPeople.size()/2;i++) {
+    while (matchedPeople.size() != 0) {
         vector<Person> pairs;
         pairs.push_back(matchedPeople.at(0));
         matchedPeople.erase(matchedPeople.begin());
@@ -252,10 +264,19 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
     int index;
     string matchNum = "0";
     string result;
-    string tempResult = result;
+    string tempResult;
     while (1) {
 
         cout << "Which match would you like to update? \nEnter:  ";
+        for (int i = 0; i < matches.size(); i++) {
+            for (int j = 0; j < matches.at(i).size(); j++) {
+                cout << matches.at(i).at(j).getName() + "\t";
+            }
+            cout << endl;
+        }
+
+
+
         cin >> matchNum;
         for (int i = 0; i < matchNum.size(); i++) {
             if (!(isdigit(matchNum.at(i)))) {
@@ -267,10 +288,10 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
 
     }
 
-    while (1) {
+    while (!((tempResult == "W") || (tempResult == "D") || (tempResult == "B"))) {
         cout << "Who won? (W=White D= Draw B=Black) \nEnter:  ";
         cin >> tempResult;
-        if (!((result != "W") || (result != "D") || (result != "B"))) {
+        if (((tempResult != "W") || (tempResult != "D") || (tempResult != "B"))) {
             //Insert error message
             continue;
         }
@@ -278,11 +299,22 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
             break;
         }
     }
+
+
     for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
 
         for (int j = 0; people.size(); j++) {
             if (matches.at(stoi(matchNum) - 1).at(i).getName() == people.at(j).getName()) {
                 index = j;
+                string roundResult = people.at(j).getMatchHistory().at(currRound-1);
+                result = roundResult.at(0);
+
+                if (result == "W") {
+                    people.at(j).setScore(people.at(j).getScore()-1);
+                }
+
+
+
                 break;
             }
 
@@ -292,24 +324,22 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
 
 
 
-
-
-        if (((i + stoi(matchNum))+1 % 2) == 0) {
+        if (((i + stoi(matchNum)+1) % 2) == 0) {
             color = "WH";
             if (tempResult == "W") {
-                result = "L";
+                result = "W";
             }
             else if (tempResult == "B") {
-                result = "W";
+                result = "L";
             }
         }
         else {
             color = "BL";
             if (tempResult == "B") {
-                result = "L";
-            }
-            else if (tempResult == " W") {
                 result = "W";
+            }
+            else if (tempResult == "W") {
+                result = "L";
             }
         }
 
@@ -323,9 +353,6 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
 
 
 }
-
-
-
 
 void editTourMain() {
     ifstream inFile;
@@ -383,7 +410,7 @@ void editTourMain() {
             updatePlayers(people, tourName);
         }
         else if (userInput == 4) {
-            //pigeionHoleSort(currRound + 1,people);
+            pigeionHoleSort(currRound + 1,people);
             viewLeaderboard(people, tourName, rounds);
         }
         else if (userInput ==5) {
