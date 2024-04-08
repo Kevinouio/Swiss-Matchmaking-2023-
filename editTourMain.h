@@ -177,7 +177,71 @@ int getCurrRounds(string tourName) {
 
 }
 
-void updateCurrRound(int &currRound, string tourName);
+void updateCurrRound(int &currRound, string tourName) {
+    vector<string> resultList;
+    string fileLine;
+    string tourInfo;
+    bool allMatchesDone = true;
+    ifstream inFile(tourName+ "Leaderboard.csv");
+    getline(inFile, fileLine);
+    while(!inFile.eof()) {
+        for (int i = 0; i < currRound + 3; i++){
+            getline(inFile, fileLine, ',');
+        }
+        getline(inFile, fileLine, ',');
+        resultList.push_back(fileLine);
+        getline(inFile, fileLine);
+    }
+
+    inFile.close();
+    for (int i = 0; i < resultList.size(); i++) {
+        if (resultList.at(i) == "DNE") {
+            allMatchesDone = false;
+        }
+
+    }
+
+
+    if (allMatchesDone) {
+        currRound += 1;
+    }
+
+    resultList.clear();
+    inFile.open(tourName + ".csv");
+
+
+    getline(inFile, fileLine);
+    resultList.push_back(fileLine);
+
+    getline(inFile, fileLine,'+');
+    tourInfo = fileLine + "+";
+
+    getline(inFile, fileLine,',');
+    tourInfo += fileLine + ",";
+
+    getline(inFile, fileLine,',');
+    tourInfo += fileLine + ",";
+
+    tourInfo += to_string(currRound);
+    resultList.push_back(tourInfo);
+
+    inFile.close();
+
+    ofstream outFile(tourName + ".csv");
+    for (int i = 0; i < resultList.size(); i++) {
+        outFile << resultList.at(i) << endl;
+    }
+
+
+
+
+
+
+
+
+
+
+}
 
 vector<vector<Person>> getPairings(string tourName, int currRound, vector<Person> people) {
     vector<vector<Person>> matches;
@@ -406,6 +470,7 @@ void editTourMain() {
             updateScore(people, tourName, matches, currRound);
         }
         else if (userInput ==3) {
+            updateCurrRound(currRound, tourName);
             matches = createPairings(people, tourName, currRound);
             updatePlayers(people, tourName);
         }

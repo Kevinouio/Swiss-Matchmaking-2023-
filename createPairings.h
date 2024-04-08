@@ -84,6 +84,21 @@ int findRank(vector<Person> people, Person player){
 }
 
 
+bool conditions(vector<Person> pair) {
+
+
+
+
+
+
+    return false;
+}
+
+
+
+
+
+
 vector<vector<Person>> createPairings(vector<Person> &people,string tourName, int currRound) {
     //sorting algorithm for the people vector
     ofstream csvPairings(tourName + "Round_" + to_string(currRound) + ".csv");
@@ -91,6 +106,7 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     vector<Person> tempPeople;
     vector<vector<Person>> scores;
     vector<vector<Person>> tempScores;
+    vector<vector<Person>> tempTempScores;
     vector<vector<Person>> matches;
 
 
@@ -164,6 +180,76 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     }
 
     else {
+        while(tempPeople.size() != 0) {
+            // iterates through the scores with their respective score starting from the top
+            for (int i = (scores.size()-1); i >= 0; i--) {
+                if (scores.at(i).size() == 0) {
+                    continue;
+                }
+
+                int repeats = ceil(scores.at(i).size()/2);
+                if (tempPeople.size() % 2 == 1) {
+                    repeats++;
+                }
+                //iterates throught the players within the list and makes a pair for each person
+                for(int j = 0; j < repeats; j++) {
+                    vector<Person> pairs;
+                    Person player;
+                    int index = 0;
+                    if ((scores.at(i).size() == 1) || ((i == 0) && (scores.at(i).size() % 2 == 1))) {
+
+                        if (i==0) {
+                            player = scores.at(scores.size()-1).at(0);
+                            for (int i = 0; i < people.size(); i++) {
+                                if (player.getName() == people.at(i).getName()) {
+                                    index = i;
+                                }
+                            }
+                            giveBye(people.at(index), currRound);
+                            tempScores.at(i).erase(tempScores.at(i).begin());
+
+                            continue;
+                        }
+                        else {
+                            scores.at(i-1).insert(scores.at(i-1).begin(), player);
+                            tempScores.at(i).erase(tempScores.at(i).begin());
+                        }
+                    }
+
+
+
+
+                    // finish this part
+                    int shift = 0;
+
+                    pairs.push_back(scores.at(i).at(0));
+                    pairs.push_back(scores.at(i).at(scores.at(i).size()-shift));
+                    while (conditions(pairs)) {
+                        pairs.clear();
+                        shift++;
+                        pairs.push_back(scores.at(i).at(0));
+                        pairs.push_back(scores.at(i).at(scores.at(i).size()-shift));
+
+
+                    }
+
+                    matches.push_back(pairs);
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
 
 
 
