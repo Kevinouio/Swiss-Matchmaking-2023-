@@ -85,17 +85,15 @@ int findRank(vector<Person> people, Person player){
 }
 
 
-bool conditions(vector<Person> pair, int currRound, vector<Person> people) {
+bool conditions(vector<Person> &pair, int currRound, vector<Person> people) {
     // Same color poggers just swap the players in the pair list
 
+    if (pair.size() != 2) {
+        return true;
+    }
     if (currRound > 2) {
-        for (int i = 0; i < currRound - 1; i++ ) {
-            string playerOneMatch = pair.at(0).getMatchHistory().at(i);
-            string playerTwoMatch = pair.at(1).getMatchHistory().at(i);
+        for(int i = 0; i < pair.size(); i++) {
 
-            if (playerOneMatch.at(2) == playerTwoMatch.at(2)) {
-                return true;
-            }
         }
     }
 
@@ -103,11 +101,8 @@ bool conditions(vector<Person> pair, int currRound, vector<Person> people) {
     for (int i = 0; i < currRound - 1; i++ ) {
         string playerOneMatch = pair.at(0).getMatchHistory().at(i);
         string playerTwoMatch = pair.at(1).getMatchHistory().at(i);
-
-
-
         if (playerOneMatch.at(2) == playerTwoMatch.at(2)) {
-            return false;
+            return true;
         }
     }
     return false;
@@ -205,7 +200,6 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
         int temps = people.size()/2;
         while(matches.size() != temps) {
 
-            //if (matches.size() > 8) {   break;   }
 
 
             // iterates through the scores with their respective score starting from the top
@@ -221,6 +215,7 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
                 }
                 //iterates throught the players within the list and makes a pair for each person
                 for(int j = 0; j < repeats; j++) {
+                    int firstShift = 0;
                     vector<Person> pairs;
                     Person player;
                     int index = 0;
@@ -250,26 +245,31 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
                     }
 
 
-
-                    int shift = 0;
-                    pairs.push_back(tempScores.at(i).at(0));
-                    tempScores.at(i).erase(tempScores.at(i).begin());
-                    pairs.push_back(tempScores.at(i).at((tempScores.at(i).size())-shift-1));
-                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1);
-                    while (conditions(pairs,currRound,people)){
+                    int shift;
+                    while(conditions(pairs,currRound,people)) {
+                        shift = 0;
                         pairs.clear();
-                        shift++;
-                        if (shift == (tempScores.at(i).size() -1)) {
-                            // temp varibles bs also do this later cause this will naturallly work i believe
-                        }
-
                         pairs.push_back(tempScores.at(i).at(0));
-                        tempScores.at(i).erase(tempScores.at(i).begin());
-                        pairs.push_back(tempScores.at(i).at(tempScores.at(i).size()-shift));
-                        tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1);
+                        pairs.push_back(tempScores.at(i).at((tempScores.at(i).size())-1 -firstShift));
+                        while (conditions(pairs,currRound,people)){
+                            pairs.clear();
+                            shift++;
+                            if (shift == (tempScores.at(i).size() -1)) {
+                                firstShift +=1;
+                                j--;
+                                break;
+                            }
+
+                            pairs.push_back(tempScores.at(i).at(0));
+                            pairs.push_back(tempScores.at(i).at(tempScores.at(i).size()-shift));
+
+
+                        }
 
 
                     }
+                    tempScores.at(i).erase(tempScores.at(i).begin());
+                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1-firstShift);
                     matches.push_back(pairs);
                 }
             }
