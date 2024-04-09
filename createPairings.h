@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <algorithm>
 using namespace std;
 
 
@@ -84,13 +85,31 @@ int findRank(vector<Person> people, Person player){
 }
 
 
-bool conditions(vector<Person> pair) {
+bool conditions(vector<Person> pair, int currRound, vector<Person> people) {
+    // Same color poggers just swap the players in the pair list
+
+    if (currRound > 2) {
+        for (int i = 0; i < currRound - 1; i++ ) {
+            string playerOneMatch = pair.at(0).getMatchHistory().at(i);
+            string playerTwoMatch = pair.at(1).getMatchHistory().at(i);
+
+            if (playerOneMatch.at(2) == playerTwoMatch.at(2)) {
+                return true;
+            }
+        }
+    }
+
+    // same player
+    for (int i = 0; i < currRound - 1; i++ ) {
+        string playerOneMatch = pair.at(0).getMatchHistory().at(i);
+        string playerTwoMatch = pair.at(1).getMatchHistory().at(i);
 
 
 
-
-
-
+        if (playerOneMatch.at(2) == playerTwoMatch.at(2)) {
+            return false;
+        }
+    }
     return false;
 }
 
@@ -119,6 +138,7 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
 
     tempPeople = people;
     scores = pigeionHoleSort(currRound + 1, people);
+    reverse(scores.begin(),scores.end());
     tempScores = scores;
 
 
@@ -180,15 +200,23 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     }
 
     else {
-        while(tempPeople.size() != 0) {
+        //tempScores.at(tempScores.size()-1).size() != 0
+
+        int temps = people.size()/2;
+        while(matches.size() != temps) {
+
+            //if (matches.size() > 8) {   break;   }
+
+
             // iterates through the scores with their respective score starting from the top
-            for (int i = (scores.size()-1); i >= 0; i--) {
-                if (scores.at(i).size() == 0) {
+            for (int i = 0; i < tempScores.size(); i++) {
+                //If the score is empty go to the next list of scores
+                if (tempScores.at(i).size() == 0) {
                     continue;
                 }
 
-                int repeats = ceil(scores.at(i).size()/2);
-                if (tempPeople.size() % 2 == 1) {
+                int repeats = ceil(tempScores.at(i).size()/2);
+                if (tempScores.at(i).size() % 2 == 1) {
                     repeats++;
                 }
                 //iterates throught the players within the list and makes a pair for each person
@@ -196,61 +224,75 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
                     vector<Person> pairs;
                     Person player;
                     int index = 0;
-                    if ((scores.at(i).size() == 1) || ((i == 0) && (scores.at(i).size() % 2 == 1))) {
 
-                        if (i==0) {
+                    if ((tempScores.at(i).size() == 1) || ((i == tempScores.size()-1) && (tempScores.at(i).size() % 2 == 1))) {
+
+                        if (i == tempScores.size()-1) {
                             player = scores.at(scores.size()-1).at(0);
-                            for (int i = 0; i < people.size(); i++) {
-                                if (player.getName() == people.at(i).getName()) {
-                                    index = i;
+                            for (int k = 0; k < people.size(); k++) {
+                                if (player.getName() == people.at(k).getName()) {
+                                    index = k;
                                 }
                             }
                             giveBye(people.at(index), currRound);
                             tempScores.at(i).erase(tempScores.at(i).begin());
-
+                            repeats--;
                             continue;
                         }
                         else {
-                            scores.at(i-1).insert(scores.at(i-1).begin(), player);
+                            player = tempScores.at(i).at(0);
+
+                            tempScores.at(i+1).push_back(player);
                             tempScores.at(i).erase(tempScores.at(i).begin());
+
+                            continue;
                         }
                     }
 
 
 
-
-                    // finish this part
                     int shift = 0;
-
-                    pairs.push_back(scores.at(i).at(0));
-                    pairs.push_back(scores.at(i).at(scores.at(i).size()-shift));
-                    while (conditions(pairs)) {
+                    pairs.push_back(tempScores.at(i).at(0));
+                    tempScores.at(i).erase(tempScores.at(i).begin());
+                    pairs.push_back(tempScores.at(i).at((tempScores.at(i).size())-shift-1));
+                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1);
+                    while (conditions(pairs,currRound,people)){
                         pairs.clear();
                         shift++;
-                        pairs.push_back(scores.at(i).at(0));
-                        pairs.push_back(scores.at(i).at(scores.at(i).size()-shift));
+                        if (shift == (tempScores.at(i).size() -1)) {
+                            // temp varibles bs also do this later cause this will naturallly work i believe
+                        }
+
+                        pairs.push_back(tempScores.at(i).at(0));
+                        tempScores.at(i).erase(tempScores.at(i).begin());
+                        pairs.push_back(tempScores.at(i).at(tempScores.at(i).size()-shift));
+                        tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1);
 
 
                     }
-
                     matches.push_back(pairs);
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
+        for (int i = 0; i < matches.size() ; i++) {
+            if (i % 2 == 0) {
+                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(0))) + ",,";
+                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
 
+                csvLine += to_string(findRank(people, matches.at(i).at(1))) + ",";
+                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
+                csvPairings << csvLine << endl;
+            }
+            else if (i % 2 == 1) {
+                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(1))) + ",,";
+                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
+
+
+                csvLine += to_string(findRank(people, matches.at(i).at(0))) + ",";
+                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
+                csvPairings << csvLine << endl;
+            }
+        }
 
 
 
@@ -268,7 +310,7 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
 
 
 
-
+    csvPairings.close();
 
 
 
