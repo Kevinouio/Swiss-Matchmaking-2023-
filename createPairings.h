@@ -119,8 +119,7 @@ bool conditions(vector<Person> &pair, int currRound, vector<Person> people) {
         if(playerOneMatch.at(2) == 'E') {
             break;
         }
-        cout << playerOneMatch.at(2) << "   " << playerTwoMatch.at(2) << "MATCHES" <<endl;
-
+\
         if (playerOneMatch.at(2) == playerTwoMatch.at(2)) {
             return true;
         }
