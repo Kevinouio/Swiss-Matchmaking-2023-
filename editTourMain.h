@@ -329,7 +329,8 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
     string matchNum = "0";
     string result;
     string tempResult;
-    while (1) {
+    bool notNum = true;
+    while (notNum) {
 
         cout << "Which match would you like to update? \nEnter:  ";
         for (int i = 0; i < matches.size(); i++) {
@@ -345,10 +346,12 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
         for (int i = 0; i < matchNum.size(); i++) {
             if (!(isdigit(matchNum.at(i)))) {
                 errorMessageValue();
-                continue;
+                notNum = true;
+                break;
             }
+            notNum = false;
         }
-        break;
+
 
     }
 
@@ -450,7 +453,6 @@ void editTourMain() {
     rounds = getRounds(tourName);
     currRound = getCurrRounds(tourName);
     getCurrentPlayers(tourName, people, rounds);
-    matches = getPairings(tourName, currRound, people);
 
 
     while(1) {
@@ -467,6 +469,7 @@ void editTourMain() {
             addPlayer(tourName, people, rounds);
         }
         else if (userInput ==2) {
+            matches = getPairings(tourName, currRound, people);
             updateScore(people, tourName, matches, currRound);
         }
         else if (userInput ==3) {
