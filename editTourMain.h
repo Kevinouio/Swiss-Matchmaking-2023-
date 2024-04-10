@@ -370,6 +370,7 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
 
     for (int i = 0; i < matches.at(stoi(matchNum) - 1).size(); i++) {
 
+        //
         for (int j = 0; people.size(); j++) {
             if (matches.at(stoi(matchNum) - 1).at(i).getName() == people.at(j).getName()) {
                 index = j;
@@ -378,6 +379,9 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
 
                 if (result == "W") {
                     people.at(j).setScore(people.at(j).getScore()-1);
+                }
+                else if (result == "D") {
+                    people.at(j).setScore(people.at(j).getScore()-0.5);
                 }
                 break;
             }
@@ -475,7 +479,7 @@ void editTourMain() {
             updatePlayers(people, tourName);
         }
         else if (userInput == 4) {
-            pigeionHoleSort(currRound + 1,people);
+            pigeionHoleSort(currRound + 2,people);
             viewLeaderboard(people, tourName, rounds);
         }
         else if (userInput ==5) {
