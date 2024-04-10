@@ -116,6 +116,9 @@ bool conditions(vector<Person> &pair, int currRound, vector<Person> people) {
     for (int i = 0; i < currRound - 1; i++ ) {
         string playerOneMatch = pair.at(0).getMatchHistory().at(i);
         string playerTwoMatch = pair.at(1).getMatchHistory().at(i);
+
+        cout << playerOneMatch.at(2) << "   " << playerTwoMatch.at(2) << "MATCHES" <<endl;
+
         if (playerOneMatch.at(2) == playerTwoMatch.at(2)) {
             return true;
         }
@@ -138,6 +141,8 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     vector<vector<Person>> tempTempScores;
     vector<vector<Person>> matches;
     vector<vector<vector<Person>>> scoresHistory;
+    int prevShift = 0;
+    int count =0;
 
     csvLine = ",,,White,,,Black";
     csvPairings << csvLine << endl;
@@ -218,6 +223,8 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
             // iterates through the scores with their respective score starting from the top
             for (int i = 0; i < tempScores.size(); i++) {
 
+                cout << firstShift << "FIRST SHIFT"<< endl;
+                cout << endl;
 
 
                 //If the score is empty go to the next list of scores
@@ -238,13 +245,22 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
 
 
                 }
+
+
+                count++;
+                if (count==20) scoresHistory.at(2837456);
                 //iterates throught the players within the list and makes a pair for each person
                 for(int j = 0; j < repeats; j++) {
+                    for (int f = 0; f < tempScores.size(); f++) {
+                        cout << tempScores.at(f).size() << "  SIZE" << endl;
+                    }
+                    cout << endl;
 
                     vector<Person> pairs;
                     Person player;
                     int index = 0;
                     bool noPairsExist = false;
+
                     if ((tempScores.at(i).size() == 1) || ((i == tempScores.size()-1) && (tempScores.at(i).size() % 2 == 1))) {
                         if (i == tempScores.size()-1) {
                             player = scores.at(scores.size()-1).at(0);
@@ -255,7 +271,6 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
                             }
                             giveBye(people.at(index), currRound);
                             tempScores.at(i).erase(tempScores.at(i).begin());
-                            repeats--;
                             continue;
                         }
                         else {
@@ -275,36 +290,65 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
                         pairs.clear();
                         pairs.push_back(tempScores.at(i).at(0));
                         pairs.push_back(tempScores.at(i).at((tempScores.at(i).size())-1 -firstShift));
+
+
                         while (conditions(pairs,currRound,people)){
                             pairs.clear();
                             shift++;
-                            if (shift == (tempScores.at(i).size() -1) || (shift + firstShift == (tempScores.at(i).size()-1))) {
-                                tempScores = scoresHistory.at(scoresHistory.size()-1);
-                                scoresHistory.pop_back();
-                                matches.pop_back();
+                            pairs.push_back(tempScores.at(i).at(0));
+                            pairs.push_back(tempScores.at(i).at(tempScores.at(i).size()-shift-firstShift));
+                            if (!conditions(pairs,currRound,people)) {
+                                break;
+                            }
+                            cout << prevShift << " PREVSHIFT" << endl;
+                            if (shift == (tempScores.at(i).size() -1) || (shift + firstShift == (tempScores.at(i).size()-1))){
+
+                                if (prevShift >= tempScores.at(i).size()) {
+                                    Person player = tempScores.at(i).at(tempScores.at(i).size()-1);
+                                    tempScores.at(i+1).push_back(player);
+                                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
+                                    player = tempScores.at(i).at(tempScores.at(i).size()-1);
+                                    tempScores.at(i+1).push_back(player);
+                                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
+                                    repeats--;
+                                    noPairsExist = true;
+                                    break;
+                                }
+                                if (scoresHistory.size() != 0) {
+                                    tempScores = scoresHistory.at(scoresHistory.size()-1);
+                                    scoresHistory.pop_back();
+                                    matches.pop_back();
+                                }
                                 noPairsExist = true;
                                 firstShift +=1;
                                 i =0;
                                 break;
                             }
 
-                            pairs.push_back(tempScores.at(i).at(0));
-                            pairs.push_back(tempScores.at(i).at(tempScores.at(i).size()-shift-firstShift));
-
 
                         }
+
+
                         if (noPairsExist) {
                             break;
                         }
 
                     }
+
+
+                    if ((prevShift > 0)&& (noPairsExist)) {
+                        continue;
+                    }
                     if (noPairsExist){
                         break;
                     }
+
+
                     scoresHistory.push_back(tempScores);
                     tempScores.at(i).erase(tempScores.at(i).begin());
+                    prevShift = shift + firstShift;
+                    if (shift > 0)shift--;
                     tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1-firstShift);
-
                     matches.push_back(pairs);
                     if (firstShift > 0) {
                         firstShift = 0;

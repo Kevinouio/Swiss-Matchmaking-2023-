@@ -379,9 +379,6 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
                 if (result == "W") {
                     people.at(j).setScore(people.at(j).getScore()-1);
                 }
-
-
-
                 break;
             }
 
