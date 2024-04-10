@@ -375,6 +375,7 @@ void updateScore(vector<Person> &people, string tourName, vector<vector<Person>>
             if (matches.at(stoi(matchNum) - 1).at(i).getName() == people.at(j).getName()) {
                 index = j;
                 string roundResult = people.at(j).getMatchHistory().at(currRound-1);
+                if(roundResult.size() < 4) break;
                 result = roundResult.at(0);
 
                 if (result == "W") {

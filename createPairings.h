@@ -116,7 +116,9 @@ bool conditions(vector<Person> &pair, int currRound, vector<Person> people) {
     for (int i = 0; i < currRound - 1; i++ ) {
         string playerOneMatch = pair.at(0).getMatchHistory().at(i);
         string playerTwoMatch = pair.at(1).getMatchHistory().at(i);
-
+        if(playerOneMatch.at(2) == 'E') {
+            break;
+        }
         cout << playerOneMatch.at(2) << "   " << playerTwoMatch.at(2) << "MATCHES" <<endl;
 
         if (playerOneMatch.at(2) == playerTwoMatch.at(2)) {
@@ -157,232 +159,165 @@ vector<vector<Person>> createPairings(vector<Person> &people,string tourName, in
     tempScores = scores;
 
     //Round one with no conditions are being broken
-    if (currRound == 1) {
-        //This part can be rewritten because ceiling division just doesn't work for some reason
-        int repeats = ceil(tempPeople.size()/2);
-        if (tempPeople.size() % 2 == 1) {
-            repeats++;
-        }
 
-        for (int i = 0; i< repeats; i++) {
-            vector<Person> pairs;
-            Person player;
-            int index = 0;
-            if (tempPeople.size() % 2 == 1) {
+    int temps = people.size()/2;
+    while(matches.size() != temps) {
+        int firstShift = 0;
 
-                player = scores.at(scores.size()-1).at(0);
-                for (int i = 0; i < people.size(); i++) {
-                    if (player.getName() == people.at(i).getName()) {
-                        index = i;
-                    }
-                }
-                giveBye(people.at(index), currRound);
-                tempPeople.erase(tempPeople.begin());
 
+        // iterates through the scores with their respective score starting from the top
+        for (int i = 0; i < tempScores.size(); i++) {
+
+            //If the score is empty go to the next list of scores
+            if (tempScores.at(i).size() == 0) {
                 continue;
             }
-            pairs.push_back(tempPeople.at(0));
-            tempPeople.erase(tempPeople.begin());
-            pairs.push_back(tempPeople.at(tempPeople.size()-1));
-            tempPeople.pop_back();
-
-
-
-            matches.push_back(pairs);
-        }
-        for (int i = 0; i < matches.size() ; i++) {
-            if (i % 2 == 0) {
-                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(0))) + ",,";
-                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
-
-                csvLine += to_string(findRank(people, matches.at(i).at(1))) + ",";
-                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
-                csvPairings << csvLine << endl;
+            int repeats = tempScores.at(i).size()/2;
+            if (tempScores.at(i).size() % 2 == 1) {
+                repeats++;
             }
-            else if (i % 2 == 1) {
-                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(1))) + ",,";
-                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
+            if (firstShift == (tempScores.at(i).size()-1)) {
+                Person player = tempScores.at(i).at(tempScores.at(i).size()-1);
+                tempScores.at(i+1).push_back(player);
+                tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
+                firstShift = 0;
+                i-=2;
+                continue;
 
 
-                csvLine += to_string(findRank(people, matches.at(i).at(0))) + ",";
-                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
-                csvPairings << csvLine << endl;
             }
-        }
 
 
-    }
+            count++;
+            //if (count==20) scoresHistory.at(2837456);
+            //iterates throught the players within the list and makes a pair for each person
+            for(int j = 0; j < repeats; j++) {
+                vector<Person> pairs;
+                Person player;
+                int index = 0;
+                bool noPairsExist = false;
 
-    else {
-
-        int temps = people.size()/2;
-        while(matches.size() != temps) {
-            int firstShift = 0;
-
-
-            // iterates through the scores with their respective score starting from the top
-            for (int i = 0; i < tempScores.size(); i++) {
-
-                cout << firstShift << "FIRST SHIFT"<< endl;
-                cout << endl;
-
-
-                //If the score is empty go to the next list of scores
-                if (tempScores.at(i).size() == 0) {
-                    continue;
-                }
-                int repeats = tempScores.at(i).size()/2;
-                if (tempScores.at(i).size() % 2 == 1) {
-                    repeats++;
-                }
-                if (firstShift == (tempScores.at(i).size()-1)) {
-                    Person player = tempScores.at(i).at(tempScores.at(i).size()-1);
-                    tempScores.at(i+1).push_back(player);
-                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
-                    firstShift = 0;
-                    i-=2;
-                    continue;
-
-
-                }
-
-
-                count++;
-                //if (count==20) scoresHistory.at(2837456);
-                //iterates throught the players within the list and makes a pair for each person
-                for(int j = 0; j < repeats; j++) {
-                    for (int f = 0; f < tempScores.size(); f++) {
-                        cout << tempScores.at(f).size() << "  SIZE" << endl;
-                    }
-                    cout << endl;
-
-                    vector<Person> pairs;
-                    Person player;
-                    int index = 0;
-                    bool noPairsExist = false;
-
-                    if ((tempScores.at(i).size() == 1) || ((i == tempScores.size()-1) && (tempScores.at(i).size() % 2 == 1))) {
-                        if (i == tempScores.size()-1) {
-                            player = scores.at(scores.size()-1).at(0);
-                            for (int k = 0; k < people.size(); k++) {
-                                if (player.getName() == people.at(k).getName()) {
-                                    index = k;
-                                }
+                if ((tempScores.at(i).size() == 1) || ((i == tempScores.size()-1) && (tempScores.at(i).size() % 2 == 1))) {
+                    if (i == tempScores.size()-1) {
+                        player = scores.at(scores.size()-1).at(0);
+                        for (int k = 0; k < people.size(); k++) {
+                            if (player.getName() == people.at(k).getName()) {
+                                index = k;
                             }
-                            giveBye(people.at(index), currRound);
-                            tempScores.at(i).erase(tempScores.at(i).begin());
-                            continue;
                         }
-                        else {
-                            player = tempScores.at(i).at(0);
-
-                            tempScores.at(i+1).push_back(player);
-                            tempScores.at(i).erase(tempScores.at(i).begin());
-
-                            continue;
-                        }
+                        giveBye(people.at(index), currRound);
+                        tempScores.at(i).erase(tempScores.at(i).begin());
+                        continue;
                     }
+                    else {
+                        player = tempScores.at(i).at(0);
+
+                        tempScores.at(i+1).push_back(player);
+                        tempScores.at(i).erase(tempScores.at(i).begin());
+
+                        continue;
+                    }
+                }
 
 
-                    int shift;
-                    while(conditions(pairs,currRound,people)) {
-                        shift = 0;
+                int shift;
+                while(conditions(pairs,currRound,people)) {
+                    shift = 0;
+                    pairs.clear();
+                    pairs.push_back(tempScores.at(i).at(0));
+                    pairs.push_back(tempScores.at(i).at((tempScores.at(i).size())-1 -firstShift));
+
+
+                    while (conditions(pairs,currRound,people)){
                         pairs.clear();
+                        shift++;
                         pairs.push_back(tempScores.at(i).at(0));
-                        pairs.push_back(tempScores.at(i).at((tempScores.at(i).size())-1 -firstShift));
-
-
-                        while (conditions(pairs,currRound,people)){
-                            pairs.clear();
-                            shift++;
-                            pairs.push_back(tempScores.at(i).at(0));
-                            pairs.push_back(tempScores.at(i).at(tempScores.at(i).size()-shift-firstShift));
-                            if (!conditions(pairs,currRound,people)) {
-                                break;
-                            }
-                            cout << prevShift << " PREVSHIFT" << endl;
-                            if (shift == (tempScores.at(i).size() -1) || (shift + firstShift == (tempScores.at(i).size()-1))){
-
-                                if (prevShift >= tempScores.at(i).size()) {
-                                    Person player = tempScores.at(i).at(tempScores.at(i).size()-1);
-                                    tempScores.at(i+1).push_back(player);
-                                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
-                                    player = tempScores.at(i).at(tempScores.at(i).size()-1);
-                                    tempScores.at(i+1).push_back(player);
-                                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
-                                    repeats--;
-                                    noPairsExist = true;
-                                    break;
-                                }
-                                if (scoresHistory.size() != 0) {
-                                    tempScores = scoresHistory.at(scoresHistory.size()-1);
-                                    scoresHistory.pop_back();
-                                    matches.pop_back();
-                                }
-                                noPairsExist = true;
-                                firstShift +=1;
-                                i =0;
-                                break;
-                            }
-
-
+                        pairs.push_back(tempScores.at(i).at(tempScores.at(i).size()-shift-firstShift));
+                        if (!conditions(pairs,currRound,people)) {
+                            break;
                         }
+                        if (shift == (tempScores.at(i).size() -1) || (shift + firstShift == (tempScores.at(i).size()-1))){
 
-
-                        if (noPairsExist) {
+                            if (prevShift >= tempScores.at(i).size()) {
+                                Person player = tempScores.at(i).at(tempScores.at(i).size()-1);
+                                tempScores.at(i+1).push_back(player);
+                                tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
+                                player = tempScores.at(i).at(tempScores.at(i).size()-1);
+                                tempScores.at(i+1).push_back(player);
+                                tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-1);
+                                repeats--;
+                                noPairsExist = true;
+                                break;
+                            }
+                            if (scoresHistory.size() != 0) {
+                                tempScores = scoresHistory.at(scoresHistory.size()-1);
+                                scoresHistory.pop_back();
+                                matches.pop_back();
+                            }
+                            noPairsExist = true;
+                            firstShift +=1;
+                            i =0;
                             break;
                         }
 
+
                     }
 
 
-                    if ((prevShift > 0)&& (noPairsExist)) {
-                        continue;
-                    }
-                    if (noPairsExist){
+                    if (noPairsExist) {
                         break;
                     }
 
-
-                    scoresHistory.push_back(tempScores);
-                    tempScores.at(i).erase(tempScores.at(i).begin());
-                    prevShift = shift + firstShift;
-                    if (shift > 0)shift--;
-                    tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1-firstShift);
-                    matches.push_back(pairs);
-                    if (firstShift > 0) {
-                        firstShift = 0;
-                    }
-
                 }
+
+
+                if ((prevShift > 0)&& (noPairsExist)) {
+                    continue;
+                }
+                if (noPairsExist){
+                    break;
+                }
+
+
+                scoresHistory.push_back(tempScores);
+                tempScores.at(i).erase(tempScores.at(i).begin());
+                prevShift = shift + firstShift;
+                if (shift > 0)shift--;
+                tempScores.at(i).erase(tempScores.at(i).begin()+tempScores.at(i).size()-shift-1-firstShift);
+                matches.push_back(pairs);
+                if (firstShift > 0) {
+                    firstShift = 0;
+                }
+
             }
         }
-        for (int i = 0; i < matches.size() ; i++) {
-            if (i % 2 == 0) {
-                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(0))) + ",,";
-                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
-
-                csvLine += to_string(findRank(people, matches.at(i).at(1))) + ",";
-                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
-                csvPairings << csvLine << endl;
-            }
-            else if (i % 2 == 1) {
-                csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(1))) + ",,";
-                csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
-
-
-                csvLine += to_string(findRank(people, matches.at(i).at(0))) + ",";
-                csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
-                csvPairings << csvLine << endl;
-            }
-        }
-
-
-
-
-
-
     }
+    for (int i = 0; i < matches.size() ; i++) {
+        if (i % 2 == 0) {
+            csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(0))) + ",,";
+            csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
+
+            csvLine += to_string(findRank(people, matches.at(i).at(1))) + ",";
+            csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
+            csvPairings << csvLine << endl;
+        }
+        else if (i % 2 == 1) {
+            csvLine = to_string(i+1) + ".," + to_string(findRank(people, matches.at(i).at(1))) + ",,";
+            csvLine += matches.at(i).at(1).getName() +"(" + to_string(matches.at(i).at(1).getRating()) + "),,";
+
+
+            csvLine += to_string(findRank(people, matches.at(i).at(0))) + ",";
+            csvLine += matches.at(i).at(0).getName() +"(" + to_string(matches.at(i).at(0).getRating()) + "),,";
+            csvPairings << csvLine << endl;
+        }
+    }
+
+
+
+
+
+
+
 
 
 
