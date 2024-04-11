@@ -29,6 +29,13 @@ void errorMessageValue(){
     cout << "Invalid number, Please re-enter:  ";
 }
 
+void errorMessageCharacter() {
+    cout << "Not a number, Please input a number,\n";
+}
+
+void errorNotAnOption() {
+    cout << "That value is not an option, Please re-enter\n";
+}
 
 
 #endif // OUTPUTS_H

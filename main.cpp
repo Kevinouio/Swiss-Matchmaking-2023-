@@ -8,38 +8,58 @@ using namespace std;
 int main()
 {
     while (1){
-        int userInput = -1;
+        string userInput = "";
 
 
 
-        while ((1 > userInput) || (userInput >3)) {
+        bool notNum = true;
+        while (notNum) {
             firstWindow();
             cin >> userInput;
-            if ((1 > userInput) || (userInput >3)) {
-                errorMessageValue();
+            for (int i = 0; i < userInput.size(); i++) {
+                if (!(isdigit(userInput.at(i)))) {
+                    errorMessageCharacter();
+                    notNum = true;
+                    break;
+                }
+                notNum = false;
             }
         }
+        if ((1 > stoi(userInput)) || (stoi(userInput) >5)) {
+            errorNotAnOption();
+            continue;
+        }
 
-        if (userInput == 1) {
+        if (stoi(userInput) == 1) {
             while (1) {
-                userInput = -1;
+                userInput = "";
 
 
-                while ((1 > userInput) || (userInput >3)) {
+                notNum = true;
+                while (notNum) {
                     createTourWindow();
                     cin >> userInput;
-                    if ((1 > userInput) || (userInput >3)) {
-                        errorMessageValue();
+                    for (int i = 0; i < userInput.size(); i++) {
+                        if (!(isdigit(userInput.at(i)))) {
+                            errorMessageCharacter();
+                            notNum = true;
+                            break;
+                        }
+                        notNum = false;
                     }
                 }
+                if ((1 > stoi(userInput)) || (stoi(userInput) >5)) {
+                    errorNotAnOption();
+                    continue;
+                }
 
-                if (userInput == 1) {
+                if (stoi(userInput) == 1) {
                     newTourMain();
                 }
-                else if (userInput ==2) {
+                else if (stoi(userInput) ==2) {
                     editTourMain();
                 }
-                else if (userInput ==3) {
+                else if (stoi(userInput) ==3) {
                     break;
                 }
 
@@ -47,14 +67,14 @@ int main()
 
 
         }
-        else if (userInput == 2) {
+        else if (stoi(userInput) == 2) {
             viewMain();
         }
 
 
 
 
-        else if (userInput ==3) {
+        else if (stoi(userInput) ==3) {
             break;
         }
 

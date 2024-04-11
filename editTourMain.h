@@ -11,7 +11,7 @@ using namespace std;
 
 void addPlayer(string tourName, vector<Person> &people, int rounds) {
     Person player;
-    int rating;
+    string rating;
     string name;
     string USCFID;
     double score = 0.0;
@@ -42,10 +42,22 @@ void addPlayer(string tourName, vector<Person> &people, int rounds) {
     player.setName(name);
     txtFile << name << endl;
 
-    cout <<"Rating of Player?\nEnter:  ";
-    cin >> rating;
-    player.setRating(rating);
-    txtFile << rating << endl;
+
+    bool notNum = true;
+    while (notNum) {
+        cout <<"Rating of Player?\nEnter:  ";
+        cin >> rating;
+        for (int i = 0; i < rating.size(); i++) {
+            if (!(isdigit(rating.at(i)))) {
+                errorMessageValue();
+                notNum = true;
+                break;
+            }
+            notNum = false;
+        }
+    }
+    player.setRating(stoi(rating));
+    txtFile << stoi(rating) << endl;
 
     cin.ignore();
     cout <<"USCFID of Player?(Type NA if player does not have one)\nEnter:  ";
@@ -205,7 +217,6 @@ void updateCurrRound(int &currRound, string tourName) {
     if (allMatchesDone) {
         currRound += 1;
     }
-
     resultList.clear();
     inFile.open(tourName + ".csv");
 
@@ -427,7 +438,7 @@ void editTourMain() {
     ifstream inFile;
     vector<Person> people;
     string tourName;
-    int userInput = -1;
+    string userInput = "";
     int rounds;
     int currRound;
     vector<vector<Person>> matches;
@@ -457,33 +468,46 @@ void editTourMain() {
     getCurrentPlayers(tourName, people, rounds);
 
 
+
     while(1) {
-        userInput = -1;
-        while ((1 > userInput) || (userInput >5)) {
+
+        bool notNum = true;
+        while (notNum) {
             editTourWindow();
             cin >> userInput;
-            if ((1 > userInput) || (userInput >5)) {
-                errorMessageValue();
+            for (int i = 0; i < userInput.size(); i++) {
+                if (!(isdigit(userInput.at(i)))) {
+                    errorMessageCharacter();
+                    notNum = true;
+                    break;
+                }
+                notNum = false;
             }
         }
+        if ((1 > stoi(userInput)) || (stoi(userInput) >5)) {
+            errorNotAnOption();
+            continue;
+        }
 
-        if (userInput ==1) {
+
+        if (stoi(userInput) ==1) {
             addPlayer(tourName, people, rounds);
         }
-        else if (userInput ==2) {
+        else if (stoi(userInput) ==2) {
             matches = getPairings(tourName, currRound, people);
             updateScore(people, tourName, matches, currRound);
         }
-        else if (userInput ==3) {
+        else if (stoi(userInput) ==3) {
+            viewLeaderboard(people, tourName, rounds);
             updateCurrRound(currRound, tourName);
             matches = createPairings(people, tourName, currRound);
             updatePlayers(people, tourName);
         }
-        else if (userInput == 4) {
+        else if (stoi(userInput) == 4) {
             pigeionHoleSort(currRound + 2,people);
             viewLeaderboard(people, tourName, rounds);
         }
-        else if (userInput ==5) {
+        else if (stoi(userInput) ==5) {
             break;
         }
 

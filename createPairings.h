@@ -91,25 +91,40 @@ bool conditions(vector<Person> &pair, int currRound, vector<Person> people) {
     if (pair.size() != 2) {
         return true;
     }
-    /*
+
     if (currRound > 2) {
-        vector<vector<bool>> pairSameColor;
+        vector<vector<bool>> pairSameColor(2);
 
         vector<vector<string>> playersHistory;
+
+        // gets the history for each person into the player's history vector.
         for(int i = 0; i < pair.size(); i++) {
-            vector<string> pairHistory = pair.at(i).getMatchHistory();
-            playersHistory.push_back(pairHistory);
+            playersHistory.push_back(pair.at(i).getMatchHistory());
         }
         for (int i = 0; i < playersHistory.size(); i++) {
-            if(playersHistory.at(i).at(currRound -1).at(5) == playersHistory.at(i).at(currRound - 2).at(5) ) {
-                cout << playersHistory.at(i).at(currRound -1).at(5);
-                //if (playersHistory.at(i).at(currRound -1).at(5)) == 'W') {
+            if((playersHistory.at(i).at(currRound -1).at(2) == 'E') || (playersHistory.at(i).at(currRound -2).at(2) == 'E')){
+                break;
+            }
+            char prevColor = playersHistory.at(i).at(currRound -1).at(5);
+            char prevPrevColor = playersHistory.at(i).at(currRound -2).at(5);
 
-                //   }
+
+            if(prevColor == prevPrevColor) {
+                if (prevColor == 'W') {
+                    pairSameColor.at(i).at(0) = true;
+                }
+                else if (prevColor == 'B') {
+                    pairSameColor.at(i).at(1) = true;
+                }
             }
         }
+        for (int i = 0; i < pairSameColor.size(); i++) {
+            if (pairSameColor.at(0).at(i) && pairSameColor.at(1).at(i)) {
+                return true;
+            }
         }
-*/
+    }
+
 
 
     // same player
